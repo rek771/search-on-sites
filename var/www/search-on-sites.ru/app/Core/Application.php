@@ -3,62 +3,60 @@
 namespace App\Core;
 
 use App\Contracts\Handler;
-use App\Core\ConsoleKernel;
-use App\Core\Environment;
-use App\Core\HttpKernel;
-use DI\Container;
+use App\Providers\ServiceProvider;
 
 class Application
 {
-    /** @var string|null  */
+    /** @var string|null */
     private ?string $basePath;
 
-    /** @var \DI\Container  */
-    private Container $container;
-
-    /** @var \App\Core\Environment  */
-    private Environment $environment;
-
-    /** @var \App\Contracts\Handler */
-    private Handler $handler;
+    /** @var ServiceProvider */
+    private ServiceProvider $provider;
 
     /**
-     * Create a new Lumen application instance.
+     * Создает новый инстанс приложения
      *
      * @param string|null $basePath
      * @return void
      */
     public function __construct(string $basePath = null)
     {
-        $this->container = new Container();
         $this->basePath = $basePath;
 
-        $this->environment = new Environment($this->basePath);
-
-        $this->container->set('env', $this->environment);
-        $this->container->set(self::class, $this);
-        $this->container->set('app', $this);
+        $this->provider = new ServiceProvider($this);
     }
 
-    public function run()
+    /**
+     * Запускает работу приложения
+     * @throws \DI\DependencyException
+     * @throws \DI\NotFoundException
+     */
+    public function run(): void
     {
-        if ($this->isRunningInConsole()){
-            $this->handler = new ConsoleKernel();
-        }else{
-            $this->handler = new HttpKernel($this);
-        }
+        $this->provider->bind();
 
-        $this->handler->handle($this);
+        /** @var Handler $handler */
+        $handler = $this->provider->get(Handler::class);
+        $handler->handle();
     }
 
 
     /**
-     * Determine if the application is running in the console.
+     * Определяет запущено приложение из консоли или нет
      *
      * @return bool
      */
     public function isRunningInConsole(): bool
     {
         return php_sapi_name() === 'cli' || php_sapi_name() === 'phpdbg';
+    }
+
+    /**
+     * Возвращает путь до корня приложения
+     * @return string|null
+     */
+    public function path(): ?string
+    {
+        return $this->basePath;
     }
 }
