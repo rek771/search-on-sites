@@ -8,7 +8,20 @@ use App\Helpers\Str;
 class Router
 {
     /**
+     * @var \App\Core\Application
+     */
+    private Application $app;
+
+    public function __construct(Application $app)
+    {
+        $this->app = $app;
+    }
+
+    /**
+     * Запускает роутинг
      * @throws \App\Exceptions\HttpNotFound
+     * @throws \DI\DependencyException
+     * @throws \DI\NotFoundException
      */
     function start()
     {
@@ -16,7 +29,7 @@ class Router
         $actionName = $this->getActionName();
 
         if (class_exists($controllerName)) {
-            $controller = new $controllerName;
+            $controller = $this->app->provider()->get($controllerName);
         } else {
             throw new HttpNotFound("Controler {$controllerName} not found");
         }
@@ -24,42 +37,35 @@ class Router
         $action = $actionName;
 
         if (method_exists($controller, $action)) {
-            $controller->$action();
+            $response = $controller->$action();
+
+            if (!empty($response)){
+                $response->send();
+            }
         } else {
             throw new HttpNotFound("Controler {$controllerName}@{$actionName} not found");
         }
 
     }
 
+    /**
+     * @return string Возвращает имя контроллера, которое берется из строки адреса запроса
+     */
     public function getControllerName()
     {
         if ($_SERVER['REQUEST_URI'] == '/') {
             $name = 'Index';
         }else {
 
-            $name = explode('/', $_SERVER['REQUEST_URI']);
+            $name = explode('/', $_SERVER['REQUEST_URI'])[1];
         }
-
         return ucfirst("{$name}Controller");
     }
 
+    /**
+     * @return string Возвращает имя обрабатывающего метода. Имя метода совпадает с HTTP методом запроса
+     */
     public function getActionName(){
         return strtolower($_SERVER['REQUEST_METHOD']);
-    }
-
-    static function errorPage404()
-    {
-        $host = 'https://' . $_SERVER['HTTP_HOST'] . '/';
-        header('HTTP/1.1 404 Not Found');
-        header("Status: 404 Not Found");
-        header('Location:' . $host . '404');
-    }
-
-    function redirect($to)
-    {
-        $host = 'https://' . $_SERVER['HTTP_HOST'] . '/' . $to;
-        header('HTTP/1.1 302 Found');
-        header("Status: 302 Found");
-        header('Location:' . $host);
     }
 }
