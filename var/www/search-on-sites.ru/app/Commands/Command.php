@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Commands;
 
 use App\Core\Application;
@@ -11,7 +12,13 @@ abstract class Command
     protected Application $app;
 
     public function __construct(Application $app)
-   {
-       $this->app = $app;
-   }
+    {
+        $this->app = $app;
+    }
+
+    /**
+     * Запускает команду
+     * @return mixed
+     */
+    abstract function run(): void;
 }
