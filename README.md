@@ -2,7 +2,23 @@
 Приложение позволяет записывать url сайтов и делать по ним поиск - картинок, ссылок или текста.
 
 1. Перед запуском контейнера необходимо установить MYSQL не ниже 5.7 на локальную машину, запустить ее на порту 3306(если другой, то поправить манифейст Docker) и записать данные для подключения в .env файл.
-
+1.* Пока миграций нет нужно накатить таблицу в БД, вот скрипт:
+`create table tasks`\
+   `(`\
+   	`id int,`\
+    `url varchar(255) not null,`\
+   	`result_json longtext default null null,`\
+   	`result_count int default null null`\
+     `user_id varchar(30) not null;`\
+     `type int not null`\
+     `type_text varchar(255)`\
+   `);`\
+   `create unique index tasks_id_uindex`\
+   	`on tasks (id);`\
+   `alter table tasks`\
+   	`add constraint tasks_pk`\
+   		`primary key (id);`\
+   `alter table tasks modify id int auto_increment;`
 2. Далее можно запустить контейнер:\
 `docker-compose build`\
 `docker-compose up`
