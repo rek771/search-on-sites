@@ -35,6 +35,10 @@ class Application
     {
         $this->provider->bind();
 
+        if (!$this->env('DEBUG')) {
+            ini_set('display_errors', 0);
+        }
+
         /** @var Handler $handler */
         $handler = $this->provider->get(Handler::class);
         $handler->handle();
@@ -58,5 +62,28 @@ class Application
     public function path(): ?string
     {
         return $this->basePath;
+    }
+
+    /**
+     * @return \App\Providers\ServiceProvider
+     */
+    public function provider(): ServiceProvider
+    {
+        return $this->provider;
+    }
+
+    /**
+     * Gets the value of an environment variable.
+     *
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     *
+     * @throws \DI\DependencyException
+     * @throws \DI\NotFoundException
+     */
+    public function env(string $key, $default = null)
+    {
+        return $this->provider()->get(Environment::class)->get($key, $default);
     }
 }
