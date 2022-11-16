@@ -2,13 +2,21 @@
 
 namespace App\Core;
 
+
 use Dotenv\Dotenv;
 
 class Environment
 {
-    public function __construct($basePath)
+    /**
+     * @var \App\Core\Application
+     */
+    private Application $app;
+    private array $env;
+
+    public function __construct(Application $app)
     {
-        $dotenv = Dotenv::createImmutable($basePath);
+        $this->app = $app->provider()->get(Application::class);
+        $dotenv = Dotenv::createImmutable(__DIR__.'/../..');
         $dotenv->load();
     }
 
@@ -19,7 +27,7 @@ class Environment
      * @param  mixed  $default
      * @return mixed
      */
-    public static function get($key, $default = null)
+    public function get($key, $default = null)
     {
         return $_ENV[$key] ?? $default;
     }
