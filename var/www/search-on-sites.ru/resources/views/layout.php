@@ -8,9 +8,6 @@
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <body>
-<style>
-
-</style>
 <div class="header mt-5">
     <div class="container">
         <div class="row">
@@ -34,12 +31,11 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 <main class="mt-3">
     <?php
-
     use App\Core\View;
-    use App\Helpers\App;
 
     /** @var View $view */
-    $view = App::get()->provider()->get(View::class);
+    /** @var \App\Core\Application $app */
+    $view = $app->provider()->get(View::class);
     $view->render($nextTemplate, $nextVariables);
     ?>
 </main>

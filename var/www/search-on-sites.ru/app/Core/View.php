@@ -20,10 +20,12 @@ class View
      * @param $template
      * @param array $variables
      */
-    public function renderWithLayout($template, $variables = []){
+    public function renderWithLayout($template, $variables = [])
+    {
         $variables['nextTemplate'] = $template;
         $variables['nextVariables'] = $variables;
         $variables['nextVariables']['appPath'] = $this->app->path();
+        $variables['app'] = $this->app;
         $this->render('layout', $variables);
     }
 
@@ -34,9 +36,9 @@ class View
      */
     public function render(string $template, $variables = []): void
     {
-        if (isset($variables['appPath'])){
+        if (isset($variables['appPath'])) {
             $appPath = $variables['appPath'];
-        }else{
+        } else {
             $appPath = $this->app->path();
         }
 
