@@ -44,7 +44,8 @@ class ServiceProvider
         $this->container->set('app', $this->app);
         $this->container->set('env',  new Environment($this->container->get('app')));
         $this->container->set(DbConnector::class,  new MysqlConnector($this->container->get('app')));
-        $this->container->set(Model::class,  new Model($this->container->get(DbConnector::class)));
+        var_dump('preModel');
+        $this->container->set(Model::class, new Model($this->container->get(DbConnector::class)));
         $this->container->set(Downloader::class,  new CurlDownloader());
 
         if ($this->app->isRunningInConsole()){

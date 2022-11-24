@@ -14,19 +14,31 @@ class Model
         $this->connector = $connector;
     }
 
+    /**
+     * Выполняет SQL запрос напрямую
+     * @param string $sql
+     */
     public function execute(string $sql): void
     {
         $this->connector->query($sql)->execute();
     }
 
+    /**
+     * Вставляет значения из $params в соотв. колонки $columns
+     * @param string $columns
+     * @param string $params
+     */
     public function insert(string $columns,string $params): void
     {
-        var_dump("INSERT INTO {$this->table} ({$columns}) VALUES ({$params})");
         $conn = $this->connector->prepare("INSERT INTO {$this->table} ({$columns}) VALUES (?)");
-//        $conn->bind_param("s", $params);
         $conn->execute([$params]);
     }
 
+    /**
+     * Выполняет select операцию из базы по переданному sql запросу
+     * @param string $sql
+     * @return array
+     */
     public function select(string $sql): array
     {
         $result = [];
