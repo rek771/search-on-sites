@@ -9,6 +9,6 @@ EXPOSE 3306
 
 WORKDIR /var/www
 
-RUN apt-get install -y supervisor
+#RUN apt-get install -y supervisor
 
-CMD ["/usr/bin/supervisord"]
+#CMD ["/usr/bin/supervisord"]
