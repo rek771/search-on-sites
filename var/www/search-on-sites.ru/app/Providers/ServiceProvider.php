@@ -42,7 +42,6 @@ class ServiceProvider
     public function bind()
     {
         $this->container->set(Application::class, $this->app);
-        $this->container->set('app', autowire(Application::class));
         $this->container->set('env',  autowire(Environment::class));
         $this->container->set(DbConnector::class,  autowire(MysqlConnector::class));
 
@@ -62,12 +61,7 @@ class ServiceProvider
 
             $this->container->set(
                 Handler::class,
-                new HttpKernel(
-                    $this->container->get('app'),
-                    $this->container->get(Router::class),
-                    $this->container->get(Request::class),
-                    $this->container->get(Response::class),
-                )
+                autowire( HttpKernel::class)
             );
         }
 
@@ -81,6 +75,7 @@ class ServiceProvider
      * @throws \DI\NotFoundException
      */
     public function get(string $name){
-        return $this->container->get($name);
+        return $this->container->make($name);
+
     }
 }
