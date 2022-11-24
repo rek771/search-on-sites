@@ -15,7 +15,6 @@ services:
         build: ./volumes/php
         ports:
             - "3306:3306"
-        image: php:7.4-fpm
         volumes:
             - ./var/www:/var/www
             - ./etc/supervisor/conf.d:/etc/supervisor/conf.d
